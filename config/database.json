@@ -1,0 +1,4 @@
+{
+    "dbTest" : "mongodb://localhost:27017/eco-api",
+    "dbProduction" : "mongodb://localhost:27017/eco-api"
+} 
