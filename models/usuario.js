@@ -17,13 +17,27 @@ const UsuarioSchema = new mongoose.Schema({
             type: String,
             lowercase: true,
             unique: true,
-            required: [ true, errorCampo],
-            index: true, 
+            required: [true, errorCampo],
+            index: true,
             match: [/\S+@\S+\.\S+/, errorEmail]
         }
     },
     loja: {
         type: Schema.Types.ObjectId,
-        ref: "Loja"
+        ref: "Loja",
+        required: [true, errorCampo]
+    },
+    permissao: {
+        type: Array,
+        default: ["cliente"]
+    },
+    hash: String,
+    salt: String,
+    recovery: {
+        type: {
+            token: String,
+            date: Date
+        },
+        dafault: {}
     }
-})
+}, { timestamps: true })
