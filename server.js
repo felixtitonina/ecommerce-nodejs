@@ -13,11 +13,12 @@ const PORT = process.env.PORT || 3000;
 app.use("/public", express.static(__dirname + "/public"))
 app.use("/public/images", express.static(__dirname + "/public/images"))
 
-const dbs = require("./config/database.json")
+const dbs = require("./config/database")
 const dbURI = isProduction ? dbs.dbProduction : dbs.dbTest
 mongoose.connect(dbURI, { useNewUrlParser: true })
 
-app.set("View engine", "ejs")
+// SETUP EJS
+app.set("view engine", "ejs");
 
 if (!isProduction) app.use(morgan("dev"))
 app.use(cors())
