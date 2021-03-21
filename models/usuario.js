@@ -1,39 +1,36 @@
 const mongoose = require("mongoose"),
-    Schema = mongoose.Schema
-const uniqueValidator = require('mongoose-unique-validator')
-const cryto = require("crypto")
-const jwt = require("jsonwebtoken")
-const secret = require("../config").secret
-const { token } = require("morgan")
+      Schema= mongoose.Schema;
+const uniqueValidator = require('mongoose-unique-validator');
+const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
+const secret = require("../config").secret;
 
 const errorCampo = "Campo não pode ficar vazio"
 const errorEmail = "Campo inválido"
 const UsuarioSchema = new mongoose.Schema({
     nome: {
         type: String,
-        required: [true, errorCampo]
+        required: [true, "Campo não pode ficar vazio"]
     },
     email: {
-        type: {
-            type: String,
-            lowercase: true,
-            unique: true,
-            required: [true, errorCampo],
-            index: true,
-            match: [/\S+@\S+\.\S+/, errorEmail]
-        }
+        type: String,
+        lowercase: true,
+        unique: true,
+        required: [true, "não pode ficar vazio."],
+        index: true,
+        match: [/\S+@\S+\.\S+/, 'é inválido.']
     },
     loja: {
         type: Schema.Types.ObjectId,
         ref: "Loja",
-        required: [true, errorCampo]
+        required: [true, "Campo não pode ficar vazio"]
     },
     permissao: {
         type: Array,
         default: ["cliente"]
     },
-    hash: String,
-    salt: String,
+    hash: { type: String },
+    salt: { type: String },
     recovery: {
         type: {
             token: String,
@@ -46,19 +43,23 @@ const UsuarioSchema = new mongoose.Schema({
 UsuarioSchema.plugin(uniqueValidator, { message: "Já esta sendo utilizado" })
 
 UsuarioSchema.methods.setSenha = function (password) {
-    this.salt = cryto.randomBytes(16).toString("hex")
-    this.hash = cryto.pbkdf2Sync(password, this.salt, 10000, 512, "sha512").toString("hex")
+    this.salt = crypto.randomBytes(16).toString("hex")
+    this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, "sha512").toString("hex")
 }
 
-UsuarioSchema.methods.validarSenha = function (password) {
-    const hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, "sha512").toString("hex")
-    return hash === this.hash
-}
+UsuarioSchema.methods.validarSenha = function(password){
+    try {
+        const hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, "sha512").toString("hex");
+        return hash === this.hash;
+    } catch (error) {
+        return error
+    }
+};
 
 UsuarioSchema.methods.gerarToken = function () {
     const hoje = new Date()
-    const sxp = new Date(today)
-    exp.setDate(today.getDate() + 15)
+    const exp = new Date(hoje)
+    exp.setDate(hoje.getDate() + 15)
 
     return jwt.sign({
         id: this._id,
@@ -70,7 +71,7 @@ UsuarioSchema.methods.gerarToken = function () {
 
 UsuarioSchema.methods.enviarAuthJSON = function () {
     return {
-        _id: this._id, 
+        _id: this._id,
         nome: this.nome,
         email: this.email,
         loja: this.loja,

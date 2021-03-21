@@ -1,3 +1,4 @@
+// require('dotenv').config()
 const compression = require('compression')
 const express = require('express')
 const ejs = require('ejs')
@@ -5,7 +6,6 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
 const cors = require('cors')
-
 
 const app = express();
 const isProduction = process.env.NODE_ENV === "production"
@@ -15,7 +15,7 @@ app.use("/public/images", express.static(__dirname + "/public/images"))
 
 const dbs = require("./config/database")
 const dbURI = isProduction ? dbs.dbProduction : dbs.dbTest
-mongoose.connect(dbURI, { useNewUrlParser: true })
+mongoose.connect(dbURI, { useUnifiedTopology: true, useNewUrlParser: true })
 
 // SETUP EJS
 app.set("view engine", "ejs");

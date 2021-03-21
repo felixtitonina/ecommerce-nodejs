@@ -6,15 +6,20 @@ class UsuarioController {
 
     // GET / 
     index(req, res, next) {
-        Usuario.findById(req.payload.id).then(usuario => {
-            if (!usuario) return res.status(401).json({ errors: "Usuarios não reegistrado" })
-            return res.json({ usuario: usuario.enviarAuthJSON() })
-        }).catch(next)
+        try {
+            Usuario.findById(req.payload.id).then(usuario => {
+                if (!usuario) return res.status(401).json({ errors: "Usuarios não reegistrado" })
+                return res.json({ usuario: usuario.enviarAuthJSON() })
+            }).catch(next)
+        } catch (error) {
+            return error
+        }
+
     }
 
     // GET /:id
     show(req, res, next) {
-        Usuario.findById(req.payload.id).populate({ path: "loja" })
+        Usuario.findById(req.payload.id) //.populate({ path: "loja" })
             .then(usuario => {
                 if (!usuario) return res.status(401).json({ errors: "Usuarios não reegistrado" })
                 return res.json({
@@ -30,30 +35,41 @@ class UsuarioController {
 
     // POST /registrar
     store(req, res, next) {
-        const { nome, email, password } = req.body
+        const { nome, email, password, loja } = req.body
         if (!nome || !email || !password) return res.status(422).json({ errors: "Preencha todos os campos de cadastro" })
 
-        const usuario = new Usuario({ nome, email })
-        usuario.serSenha(password)
+        const usuario = new Usuario({ nome, email, loja })
+        usuario.setSenha(password)
 
         usuario.save()
             .then(() => res.json({ usuario: usuario.enviarAuthJSON() }))
-            .catch(next)
+            .catch((err) => {
+                console.log(err)
+                next(err)
+            })
     }
 
     // PUT /
     update(req, res, next) {
-        const { nome, email, password } = req.body
-        Usuario.findById(req.payload.id).then((usuario) => {
-            if (!usuario) return res.status(401).json({ errors: "Usuario não registrado" })
-            if (typeof nome !== "undefined") usuario.nome = nome
-            if (typeof email !== "undefined") usuario.email = email
-            if (typeof password !== "undefined") usuario(password)
+        try {
+            const { nome, email, password } = req.body
+            Usuario.findById(req.payload.id).then((usuario) => {
+                if (!usuario) return res.status(401).json({ errors: "Usuario não registrado" })
+                if (typeof nome !== "undefined") usuario.nome = nome
+                if (typeof email !== "undefined") usuario.email = email
+                if (typeof password !== "undefined") usuario(password)
 
-            return usuario.save().then(() => {
-                return res.json({ usuario: usuario.enviarAuthJSON() })
+                return usuario.save().then(() => {
+                    return res.json({ usuario: usuario.enviarAuthJSON() })
+                }).catch(erro => {
+                    return res.status(401).json(erro)
+                })
             }).catch(next)
-        }).catch(next)
+        } catch (error) {
+            console.log(error.message)
+            return error
+        }
+
 
     }
 
@@ -70,15 +86,22 @@ class UsuarioController {
 
     // POST /login
     login(req, res, next) {
-        const { email, password } = req.body
-        if (!email) return res.status(422).json({ errors: { email: "Não pode ficar vazio" } })
-        if (!password) return res.status(422).json({ errors: { password: "Não pode ficar vazio" } })
+        try {
+            const { email, password } = req.body
+            if (!email) return res.status(422).json({ errors: { email: "Não pode ficar vazio" } })
+            if (!password) return res.status(422).json({ errors: { password: "Não pode ficar vazio" } })
 
-        Usuario.findOne({ email }).then((usuario) => {
-            if (!usuario) return res.status(401).json({ errors: "Usuario não encontrado" })
-            if (!usuario.validarSenha(password)) return res.status(401).json({ errors: "Senha inválida" })
-            return res.json({ usuario: usuario.enviarAuthJSON() })
-        }).catch(next)
+            Usuario.findOne({ email }).then((usuario) => {
+                if (!usuario) return res.status(401).json({ errors: "Usuario não encontrado" })
+                if (!usuario.validarSenha(password)) return res.status(401).json({ errors: "Senha inválida" })
+                return res.json({ usuario: usuario.enviarAuthJSON() })
+            }).catch(next)
+
+        } catch (error) {
+            console.log(error)
+            return error
+        }
+
     }
 
 
@@ -138,4 +161,4 @@ class UsuarioController {
 
 }
 
-module.exports  = UsuarioController
+module.exports = UsuarioController

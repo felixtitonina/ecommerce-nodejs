@@ -8,8 +8,8 @@ const usuarioController = new UsuarioController()
 
 router.post("/login", usuarioController.login)
 router.post("/registrar", usuarioController.store)
-router.put("/", usuarioController.update)
-router.delete("/", usuarioController.remove)
+router.put("/", auth.required, usuarioController.update)
+router.delete("/", auth.required, usuarioController.remove)
 
 router.get("/recuperar-senha", usuarioController.showRecovery)
 router.post("/recuperar-senha", usuarioController.createRecovery)
