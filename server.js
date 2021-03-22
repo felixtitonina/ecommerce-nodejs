@@ -32,18 +32,19 @@ require("./models")
 
 app.use("/", require("./routes"))
 
-// 404 - rota 
-app.use((req, res, neext) => {
-    const err = new Error("Not Found")
-    err.status = 404
-    neext(err)
-})
+// 404 - ROTA
+app.use((req, res, next) => {
+    const err = new Error("Not Found");
+    err.status = 404;
+    next(err);
+});
 
-app.use((err, req, res, neext) => {
-    res.status(err.status || 500)
-    if (err.status !== 404) console.warn("Error: ", err.message, new Date())
-    res.json({ errors: { message: err.message, status: err.status } })
-})
+// ROTA - 422, 500, 401
+app.use((err, req, res, next) => {
+    res.status(err.status || 500);
+    if(err.status !== 404) console.warn("Error: ", err.message, new Date());
+    res.json(err);
+});
 
 
 
