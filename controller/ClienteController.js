@@ -62,6 +62,7 @@ class ClientesController {
                 cliente.nome
             }
             if (email) cliente.usuario.email = email
+            if (cpf) cliente.cpf = cpf
             if (telefones) cliente.telefones = telefones
             if (endereco) cliente.endereco = endereco
             if (dataDeNascimento) cliente.dataDeNascimento = dataDeNascimento
