@@ -1,17 +1,19 @@
 const router = require("express").Router()
-const lojaValidation = require("../../../controller/validacoes/lojaValidation")
 const auth = require("../../auth")
 const LojasController = require("../../../controller/LojasController")
+
+const { validate, Joi } = require('express-validation');
+const { LojaValidation } = require("../../../controller/validacoes/lojaValidation");
 
 const lojasController = new LojasController()
 
 router.get("/", lojasController.index)
-router.get("/:id", lojasController.show)
+router.get("/:id", validate(LojaValidation.show), lojasController.show)
 
 
-router.post("/", auth.required, lojasController.store)
-router.put("/:id", auth.required, lojaValidation, lojasController.update)
-router.delete("/:id", auth.required, lojaValidation, lojasController.remove)
+router.post("/", auth.required, validate(LojaValidation.store), lojasController.store)
+router.put("/:id", auth.required, LojaValidation.admin, validate(LojaValidation.update), lojasController.update)
+router.delete("/:id", auth.required, LojaValidation.admin, lojasController.remove)
 
 
 module.exports = router

@@ -22,15 +22,6 @@ class LojasController {
     store(req, res, next) {
         try {
             const { nome, cnpj, email, telefones, endereco } = req.body
-
-            const error = []
-            if (!nome) error.push("nome")
-            if (!cnpj) error.push("cnpj")
-            if (!email) error.push("email")
-            if (!telefones) error.push("telefones")
-            if (!endereco) error.push("endereco")
-            if (error.length > 0) return res.status(422).json({ error: "required", payload: error })
-
             const loja = new Loja({ nome, cnpj, email, telefones, endereco })
             loja.save()
                 .then(() => res.send({ loja }))
@@ -41,14 +32,15 @@ class LojasController {
                     }
                 )
         } catch (error) {
-            return console.error(error);
+            console.error(error);
+            next()
         }
     }
 
     // PUT /:id
     update(req, res, next) {
         const { nome, cnpj, email, telefones, endereco } = req.body
-        Loja.findById(req.params.id).then(loja => {
+        Loja.findById(req.query.id).then(loja => {
             if (!loja) return res.status(422).send({ error: "Loja não existe" })
 
             if (nome) loja.nome = nome
@@ -66,7 +58,7 @@ class LojasController {
 
     // DELETE /:id
     remove(req, res, next) {
-        Loja.findById(req.params.id).then(loja => {
+        Loja.findById(req.query.id).then(loja => {
             if (!loja) return res.status(422).send({ error: "Loja não existe" })
             Loja.remove({ _id: req.params.id }).then(() => res.send({ delete: true })).catch(next)
         })
