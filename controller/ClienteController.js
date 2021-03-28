@@ -66,6 +66,7 @@ class ClientesController {
             if (telefones) cliente.telefones = telefones
             if (endereco) cliente.endereco = endereco
             if (dataDeNascimento) cliente.dataDeNascimento = dataDeNascimento
+            await cliente.usuario.save()
             await cliente.save()
             return res.send({ cliente })
         } catch (error) {
@@ -117,6 +118,7 @@ class ClientesController {
             if (endereco) cliente.endereco = endereco
             if (dataDeNascimento) cliente.dataDeNascimento = dataDeNascimento
 
+            // await cliente.usuario.save()
             await cliente.save()
             return res.send({ cliente })
         } catch (error) {
