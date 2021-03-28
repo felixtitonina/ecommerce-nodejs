@@ -10,11 +10,11 @@ const auth = require("../../auth")
 
 // ADMIN
 router.get("/", auth.required, LojaValidation.admin, validate(ClienteValidation.index), clientesController.index)
-// router.get("/search/:search/pedidos", auth.required, LojaValidation.admin, clientesController.searchPedidos)
+// router.get("/search/:search/pedidos", auth.required, LojaValidation.admin, validate(ClienteValidation.searchPedidos), clientesController.searchPedidos)
 router.get("/search/:search", auth.required, LojaValidation.admin,  validate(ClienteValidation.search), clientesController.search)
 
 router.get("/admin/:id", auth.required, LojaValidation.admin, validate(ClienteValidation.showAdmin), clientesController.showAdmin)
-// router.get("/admin/:id/:pedidos", auth.required, LojaValidation.admin, clientesController.showPedidosCliente)
+// router.get("/admin/:id/:pedidos", auth.required, LojaValidation.admin, validate(ClienteValidation.showPedidosCliente), clientesController.showPedidosCliente)
 
 router.get("/admin/:id", auth.required, LojaValidation.admin, validate(ClienteValidation.updateAdmin), clientesController.updateAdmin)
 
