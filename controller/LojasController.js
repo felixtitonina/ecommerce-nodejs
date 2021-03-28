@@ -68,7 +68,7 @@ class LojasController {
     remove(req, res, next) {
         Loja.findById(req.params.id).then(loja => {
             if (!loja) return res.status(422).send({ error: "Loja não existe" })
-            Loja.remove().then(() => res.send({ delete: true })).catch(next)
+            Loja.remove({ _id: req.params.id }).then(() => res.send({ delete: true })).catch(next)
         })
             .catch(next)
     }

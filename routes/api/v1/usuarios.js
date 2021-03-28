@@ -2,11 +2,14 @@ const router = require("express").Router()
 const auth = require("../../auth")
 const UsuarioController = require("../../../controller/UsuarioController")
 
+const { validate, Joi } = require('express-validation');
+const { UsuarioValidation } = require("../../../controller/validacoes/usuarioValidation");
+
 const usuarioController = new UsuarioController()
 
 
 
-router.post("/login", usuarioController.login)
+router.post("/login", validate(UsuarioValidation.login, /**{keyByField: true}, {}*/ ), usuarioController.login)
 router.post("/registrar", usuarioController.store)
 router.put("/", auth.required, usuarioController.update)
 router.delete("/", auth.required, usuarioController.remove)

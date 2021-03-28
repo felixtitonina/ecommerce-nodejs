@@ -41,6 +41,9 @@ app.use((req, res, next) => {
 
 // ROTA - 422, 500, 401
 app.use((err, req, res, next) => {
+    if(err.name ==  "ValidationError"){ 
+        return res.status(err.statusCode).json(err);
+    }
     res.status(err.status || 500);
     if(err.status !== 404) console.warn("Error: ", err.message, new Date());
     res.json(err);

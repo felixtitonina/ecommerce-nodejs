@@ -88,9 +88,6 @@ class UsuarioController {
     login(req, res, next) {
         try {
             const { email, password } = req.body
-            if (!email) return res.status(422).json({ errors: { email: "Não pode ficar vazio" } })
-            if (!password) return res.status(422).json({ errors: { password: "Não pode ficar vazio" } })
-
             Usuario.findOne({ email }).then((usuario) => {
                 if (!usuario) return res.status(401).json({ errors: "Usuario não encontrado" })
                 if (!usuario.validarSenha(password)) return res.status(401).json({ errors: "Senha inválida" })
@@ -98,8 +95,7 @@ class UsuarioController {
             }).catch(next)
 
         } catch (error) {
-            console.log(error)
-            return error
+            next()
         }
 
     }
